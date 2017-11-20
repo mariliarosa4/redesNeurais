@@ -3,6 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report,confusion_matrix
 from sklearn.neural_network import MLPClassifier
+from matplotlib import pyplot as plt
+
 cancer = load_breast_cancer()
 cancer.keys()
 import pandas as pd
@@ -14,8 +16,9 @@ y = dataset.iloc[:,5]
 print(X.shape)
 print(y.shape)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y)
-
+X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.66)
+print X_train.shape, y_train.shape
+print X_test.shape, y_test.shape
 scaler = StandardScaler()
 # Fit only to the training data
 scaler.fit(X_train)
@@ -33,6 +36,14 @@ MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,
        verbose=False, warm_start=False)
 
 predictions = mlp.predict(X_test)
+print "Acuracia:", mlp.score(X_test, y_test)
 
-print(confusion_matrix(y_test,predictions))
+print"Matriz de confusao: ",(confusion_matrix(y_test,predictions))
 print(classification_report(y_test,predictions))
+## The line / model
+# plt.scatter(y_test, predictions)
+# plt.xlabel("True Values")
+# plt.ylabel("Predictions")
+# plt.show()
+
+
