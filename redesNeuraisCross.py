@@ -23,18 +23,15 @@ def somarMatrizes(matriz1, matriz2):
 seed = 7
 numpy.random.seed(seed)
 
-mlp = MLPClassifier(hidden_layer_sizes=(30,30,30))
-
-MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,
-      beta_2=0.999, early_stopping=False, epsilon=1e-08,
-      hidden_layer_sizes=(30, 30, 30), learning_rate='constant',
-      learning_rate_init=0.001, max_iter=200, momentum=0.9,
-      nesterovs_momentum=True, power_t=0.5, random_state=None,
-      shuffle=True, solver='adam', tol=0.0001, validation_fraction=0.1,
+mlp = MLPClassifier(activation='identity', alpha=0.0001, batch_size='auto',
+      hidden_layer_sizes=(30, 30, 30),  max_iter=200,
+       random_state=None,
+     solver='lbfgs', tol=0.0001, validation_fraction=0.1,
       verbose=False, warm_start=False)
 
-kf = KFold(n_splits=10) # Define the split - into 2 folds
-kf.get_n_splits(X) # returns the number of splitting iterations in the cross-validator
+
+kf = KFold(n_splits=10)
+kf.get_n_splits(X)
 print(kf)
 cont=1
 for train_index, test_index in kf.split(X):
@@ -44,17 +41,26 @@ for train_index, test_index in kf.split(X):
      y_train, y_test = y[train_index], y[test_index]
 
      mlp.fit(X_train, y_train)
+
      if (cont==1):
         matriz = confusion_matrix(y_test, mlp.predict(numpy.array(X_test)))
      if (cont==2):
          matriz = somarMatrizes(confusion_matrix(y_test, mlp.predict(numpy.array(X_test))), matriz)
-         print(matriz)
+         # print(matriz)
      cont = 2
 
-print(matriz)
+print(matriz[0][0])
 
 
 results = cross_val_score(mlp, X, y, cv=kf.get_n_splits(X))
 print "Accuracy:", results.mean()
+
+sensitivity = matriz[1][1] / float(matriz[1][0] + matriz[1][1])
+
+print"Sensitivity: ",(sensitivity)
+
+specificity = matriz[0][0] / float(matriz[0][0]+ matriz[0][1])
+
+print"Specificity: ",(specificity)
 
 
