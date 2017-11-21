@@ -14,9 +14,9 @@ dataset.iloc[0] = dataset.iloc[0].apply(pd.to_numeric, errors='coerce')
 dataset.iloc[2] = dataset.iloc[2].apply(pd.to_numeric, errors='coerce')
 dataset.iloc[3] = dataset.iloc[3].apply(pd.to_numeric, errors='coerce')
 dataset.iloc[4] = dataset.iloc[4].apply(pd.to_numeric, errors='coerce')
-
-X = dataset.iloc[:,:4]
-y = dataset.iloc[:,5]
+dataset = dataset.replace("?", -1)
+X = numpy.array(dataset.iloc[:,:4])
+y = numpy.array(dataset.iloc[:,5])
 
 seed = 7
 numpy.random.seed(seed)
@@ -37,12 +37,13 @@ print(kf)
 KFold(n_splits=10, random_state=None, shuffle=False)
 
 for train_index, test_index in kf.split(X):
+     print("TRAIN:", train_index, "TEST:", test_index)
+     X_train, X_test = X[train_index], X[test_index]
+     y_train, y_test = y[train_index], y[test_index]
 
-   X_train, X_test = X[train_index], X[test_index]
-   y_train, y_test = y[train_index], y[test_index]
+     mlp.fit(X_train, y_train)
+     print confusion_matrix(y_test, mlp.predict(numpy.array(X_test)))
 
-   mlp.fit(X_train, y_train)
-   print confusion_matrix(y_test, mlp.predict(numpy.array(X_test)))
 
 #
 #
